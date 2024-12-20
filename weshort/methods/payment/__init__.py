@@ -16,19 +16,14 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Weshort.  If not, see <http://www.gnu.org/licenses/>.
 
-from .getme import GetMe
-from .payment import CheckedTransaction, CreatedPayment, Payment, TransactionSuccess
-from .response import Response
-from .shorts import ShortUrl
-from .withdraw import Withdraw
+from .checkTransaction import CheckTransaction
+from .createPayment import CreatePayment
+from .getPayment import GetPayment
 
-__all__ = [
-    "CheckedTransaction",
-    "CreatedPayment",
-    "GetMe",
-    "Payment",
-    "Response",
-    "TransactionSuccess",
-    "ShortUrl",
-    "Withdraw"
-]
+
+class Payment(
+    CheckTransaction,
+    CreatePayment,
+    GetPayment,
+):
+    pass

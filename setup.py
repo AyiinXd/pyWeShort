@@ -87,7 +87,10 @@ setup(
     package_data={
         "weshort": ["py.typed"],
     },
-    packages=find_packages(exclude=["tests*"]),
+    packages=find_packages(exclude=[
+        "tests*",
+        "downloads*"
+    ]),
     zip_safe=False,
-    install_requires=["aiohttp"],
+    install_requires=["aiohttp", "aiofiles"],
 )

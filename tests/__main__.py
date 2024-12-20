@@ -82,6 +82,92 @@ async def createWithdraw():
     )
     print(res)
 
+
+async def getPayments():
+    res = await client.getPayments()
+    for x in res:
+        print(f"""
+Payments:
+
+Client Name: {x.ownerName}
+Order Id: {x.orderId}
+Amount: {x.amount}
+Status: {x.status}
+Created At: {x.createdAt}
+Updated At: {x.updatedAt}
+        """)
+
+
+async def getPayment():
+    res = await client.getPayment("xxxx1e2e0c3a062b17025exxxx754b5c51597c57445e26495c0f5a770107")
+    print(f"""
+Payments:
+
+Client Name: {res.ownerName}
+Order Id: {res.orderId}
+Amount: {res.amount}
+Status: {res.status}
+Created At: {res.createdAt}
+Updated At: {res.updatedAt}
+    """)
+
+
+async def createPayment():
+    res = await client.createPayment("https://weshort.pro/tyrqopeb")
+    print(f"""
+Payment Created
+
+Qris Token: {res.qrisToken}
+Transaction Id: {res.transactionId}
+Order Id: {res.orderId}
+Expired At: {res.expired}
+    """)
+    path = await client.generateQris(res.qrisToken)
+    print(path)
+
+
+async def checkTransaction():
+    res = await client.checkTransaction("xxxx1e2e0c3a062b17025exxxx754b5c51597c57445e26495c0f5a770107")
+    # Jika response data tidak kosong
+    if res.data:
+        print(f"""
+Data Payment
+
+Status Code: {res.payment.statusCode}
+Amount: {res.payment.amount}
+Currency: {res.payment.currency}
+Payment Type: {res.payment.paymentType}
+Transaction Status: {res.payment.transactionStatus}
+Fraud Status: {res.payment.fraudStatus}
+Transaction Time: {res.payment.transactionTime}
+Expired Time: {res.payment.expiredTime}
+
+
+Data Transacation:
+
+Keyword: {res.data.keyword}
+ShortUrl: {res.data.shortUrl}
+OriginUrl: {res.data.url}
+        """)
+        return
+
+    # Jika response data kosong
+    print(f"""
+Payment Checked
+
+Status Code: {res.statusCode}
+Transaction Id: {res.transactionId}
+Order Id: {res.orderId}
+Amount: {res.amount}
+Currency: {res.currency}
+Payment Type: {res.paymentType}
+Transaction Status: {res.transactionStatus}
+Fraud Status: {res.fraudStatus}
+Transaction Time: {res.transactionTime}
+Expired Time: {res.expiredTime}
+    """)
+
+
 if __name__ == "__main__":
     if len(argv) > 1:
         if argv[1] == "short":
@@ -102,7 +188,17 @@ if __name__ == "__main__":
                     run(getWithdraw())
                 elif argv[2] == "create":
                     run(createWithdraw())
+        elif argv[1] == "pay":
+            if len(argv) > 2:
+                if argv[2] == "gets":
+                    run(getPayments())
+                elif argv[2] == "get":
+                    run(getPayment())
+                elif argv[2] == "create":
+                    run(createPayment())
+                elif argv[2] == "cek":
+                    run(checkTransaction())
         else:
-            print("Usage: python3 main.py [short|wd] [create|delete|get]")
+            print("Usage: python3 main.py [short|wd|pay] [create|delete|get]")
     else:
-        print("Usage: python3 main.py [short|wd] [create|delete|get]")
+        print("Usage: python3 main.py [short|wd|pay] [create|delete|get]")

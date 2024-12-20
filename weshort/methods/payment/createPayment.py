@@ -16,44 +16,38 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Weshort.  If not, see <http://www.gnu.org/licenses/>.
 
+from typing import List
+
 import weshort
 from weshort.exception import WeShortError
-from weshort.types import Response
+from weshort.types import CreatedPayment, Response
 
 
-class CreateShortUrl:
-    async def createShortUrl(self: "weshort.WeShort", url: str, price: int) -> str:
-        """Create Short URL, the main means for interacting with API WeShort.
-
+class CreatePayment:
+    async def createPayment(self: "weshort.WeShort", shortUrl: str) -> CreatedPayment:
+        """Create Payments Shortlink, the main means for interacting with API WeShort.
+        
         Parameters:
-            url (``str``):
-                URL for shortening.
-                e.g.: "https://youtu.be/YcQFi-1lAOo?si=pZO1WopFBjU2B6XJ".
-
-            price (``int``):
-                Price for shortening.
-                e.g.: 1000.
+            shortUrl (``str``):
+                Short URL for Create Payments.
+                e.g.: "https://weshort.pro/xxxxxx".
 
         Returns:
-            ``str``: Short URL.
+            ``CreatedPayment``: CreatedPayment object.
 
         Example:
             >>> from weshort import WeShort
             >>> 
             >>> weShort = WeShort(apiToken="YOUR_API_TOKEN")
             >>> try:
-            >>>     url = await weShort.createShortUrl("https://youtu.be/YcQFi-1lAOo?si=pZO1WopFBjU2B6XJ", 1000)
-            >>>     print(url) # output: https://weshort.pro/keyword
+            >>>     data = await weShort.createPayment("https://weshort.pro/tyrqopeb")
+            >>>     print(data) # output: CreatedPayment object
             >>> except WeShortError as e:
             >>>     print(e)
         """
         res = await self.post(
-            "/short",
-            {
-                "url": url,
-                "price": str(price)
-            }
+            f"/payment?shortUrl={shortUrl}",
         )
         if not isinstance(res, Response):
             raise WeShortError(res)
-        return res.responseData['shortUrl']
+        return CreatedPayment(**res.responseData)

@@ -27,7 +27,8 @@ class DeleteShortUrl:
 
         Parameters:
             keyword (``str``):
-                Keyword for Delete Short URL, e.g.: "pZO1WopFBjU2B6XJ".
+                Keyword for Delete Short URL.
+                e.g.: "pZO1WopFBjU2B6XJ".
 
         Returns:
             ``str``: String of Response.

@@ -58,7 +58,8 @@ class GetShortUrl:
 
         Parameters:
             keyword (``str``):
-                Keyword for Get Short URL, e.g.: "pZO1WopFBjU2B6XJ".
+                Keyword for Get Short URL.
+                e.g.: "pZO1WopFBjU2B6XJ".
 
         Returns:
             ``ShortUrl``: ShortUrl class.

@@ -16,44 +16,41 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Weshort.  If not, see <http://www.gnu.org/licenses/>.
 
+from typing import Union
+
 import weshort
 from weshort.exception import WeShortError
-from weshort.types import Response
+from weshort.types import CheckedTransaction, Response, TransactionSuccess
 
 
-class CreateShortUrl:
-    async def createShortUrl(self: "weshort.WeShort", url: str, price: int) -> str:
-        """Create Short URL, the main means for interacting with API WeShort.
 
+class CheckTransaction:
+    async def checkTransaction(self: "weshort.WeShort", trxId: str) -> Union[CheckedTransaction, TransactionSuccess]:
+        """Check Details Transaction, the main means for interacting with API WeShort.
+        
         Parameters:
-            url (``str``):
-                URL for shortening.
-                e.g.: "https://youtu.be/YcQFi-1lAOo?si=pZO1WopFBjU2B6XJ".
-
-            price (``int``):
-                Price for shortening.
-                e.g.: 1000.
+            trxId (``str``):
+                Trx ID is `Transaction ID` or `Order ID` for Getting Details Transaction.
+                e.g.: "xxxxx1e2e0c3a062b17025exxxxx75405a5d5a73504f5e26495c0f5a770107".
 
         Returns:
-            ``str``: Short URL.
+            ``CheckedTransaction``: CheckedTransaction object.
 
         Example:
             >>> from weshort import WeShort
             >>> 
             >>> weShort = WeShort(apiToken="YOUR_API_TOKEN")
             >>> try:
-            >>>     url = await weShort.createShortUrl("https://youtu.be/YcQFi-1lAOo?si=pZO1WopFBjU2B6XJ", 1000)
-            >>>     print(url) # output: https://weshort.pro/keyword
+            >>>     data = await weShort.checkTransaction("xxxxx1e2e0c3a062b17025exxxxx75405a5d5a73504f5e26495c0f5a770107")
+            >>>     print(data) # output: CheckedTransaction object
             >>> except WeShortError as e:
             >>>     print(e)
         """
-        res = await self.post(
-            "/short",
-            {
-                "url": url,
-                "price": str(price)
-            }
+        res = await self.get(
+            f"/payment/check?transactionId={trxId}",
         )
         if not isinstance(res, Response):
             raise WeShortError(res)
-        return res.responseData['shortUrl']
+        if "data" in res.responseData:
+            return TransactionSuccess(**res.responseData)
+        return CheckedTransaction(**res.responseData)

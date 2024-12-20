@@ -16,62 +16,62 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Weshort.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import List
+from typing import List, Optional
 
 import weshort
 from weshort.exception import WeShortError
-from weshort.types import Withdraw, Response
+from weshort.types import Payment, Response
 
 
-class GetWithdraw:
-    async def getWithdraws(self: "weshort.WeShort") -> List[Withdraw]:
-        """Get All Withdraw, the main means for interacting with API WeShort.
+class GetPayment:
+    async def getPayments(self: "weshort.WeShort") -> List[Payment]:
+        """Get All Payments, the main means for interacting with API WeShort.
 
         Returns:
-            ``List[Withdraw]``: List of Withdraw
+            ``List[Payment]``: List of Payment.
 
         Example:
             >>> from weshort import WeShort
             >>> 
             >>> weShort = WeShort(apiToken="YOUR_API_TOKEN")
             >>> try:
-            >>>     withdraws = await weShort.getWithdraws()
-            >>>     print(withdraws) # Output: List[Withdraw]
+            >>>     url = await weShort.getPayments()
+            >>>     print(url) # output: List[Payment]
             >>> except WeShortError as e:
             >>>     print(e)
         """
         res = await self.get(
-            f"/wd",
+            f"/payment",
         )
         if not isinstance(res, Response):
             raise WeShortError(res)
-        getWithdraws: List[Withdraw] = [Withdraw(**x) for x in res.responseData]
-        return getWithdraws
+        shortsUrl: List[Payment] = [Payment(**x) for x in res.responseData]
+        return shortsUrl
 
-    async def getWithdraw(self: "weshort.WeShort", withdrawId: str) -> Withdraw:
-        """Get Withdraw, the main means for interacting with API WeShort.
-        
+    async def getPayment(self: "weshort.WeShort", orderId: str) -> Payment:
+        """Get Detail Payment, the main means for interacting with API WeShort.
+
         Parameters:
-            withdrawId (``str``):
-                Withdraw ID for Getting Details Withdraw.
-                e.g.: "WeShortWd_xxxxx_xxxxxx".
+            orderId (``str``):
+                Order ID for Get Detail Payment.
+                e.g.: "xxxxxxxxxx1e2e0c3a062b17025exxxxxxxxxx764b505b5c7053405e351c1a1d5c740e".
 
         Returns:
-            ``Withdraw``: Withdraw Object
+            ``Payment``: Payment class.
 
         Example:
             >>> from weshort import WeShort
             >>> 
             >>> weShort = WeShort(apiToken="YOUR_API_TOKEN")
             >>> try:
-            >>>     withdraw = await weShort.getWithdraw("withdrawId")
-            >>>     print(withdraw) # Output: Withdraw
+            >>>     url = await weShort.getPayment("xxxxxxxxxx1e2e0c3a062b17025exxxxxxxxxx764b505b5c7053405e351c1a1d5c740e")
+            >>>     print(url) # output: Payment class
             >>> except WeShortError as e:
                     print(e)
         """
         res = await self.get(
-            f"/wd?withdrawId={withdrawId}",
+            f"/payment?orderId={orderId}",
         )
         if not isinstance(res, Response):
             raise WeShortError(res)
-        return Withdraw(**res.responseData)
+        return Payment(**res.responseData)

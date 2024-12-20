@@ -16,6 +16,11 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Weshort.  If not, see <http://www.gnu.org/licenses/>.
 
+import aiofiles
+import aiohttp
+import os
+from typing import Optional
+
 from .base import Base
 from .exception import WeShortError
 from .methods import Methods
@@ -27,8 +32,8 @@ class WeShort(Base, Methods):
 
     Parameters:
         apiToken (``str``):
-            API token for Authorization Users, e.g.: "AxD_ABCDEFghIklzyxWvuew".\n
-            Get the *API Token* in [WeShortProfile](https://weshort.pro).
+            API token for Authorization Users, e.g.: "AxD_ABCDEFghIklzyxWvuew".
+            Get the ``API Token`` in [WeShortProfile](https://weshort.pro).
 
     Example:
         >>> from weshort import WeShort
@@ -54,3 +59,22 @@ class WeShort(Base, Methods):
         if not isinstance(res, Response):
             raise WeShortError("Failed to delete Account")
         return True
+
+    async def generateQris(self, qrisToken: str, uniqueId: Optional[str] = None) -> str:
+        if not os.path.exists("downloads"):
+            os.makedirs("downloads")
+        if not uniqueId:
+            # Create Unique Id from qrisToken
+            number = "1 2 3 4 5 6 7 8 9 0".split(" ")
+            uniqueId = "".join(qrisToken[int(i*3)] for i in number)
+        async with aiohttp.ClientSession() as session:
+            res = await session.get(
+                f"{self.baseUrl}/qris?token={qrisToken}",
+                headers=self.headers
+            )
+            if res.status == 200:
+                async with aiofiles.open(f"downloads/WeShortQris-{uniqueId}.png", "wb") as f:
+                    async for chunk, _ in res.content.iter_chunks():
+                        await f.write(chunk)
+
+        return f"downloads/WeShort-{uniqueId}-Qris.png"

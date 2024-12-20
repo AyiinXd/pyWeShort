@@ -43,13 +43,20 @@ class RequestWithdraw:
         
         Parameters:
             nameRek (``str``):
-                Name of Recipient, e.g.: "AyiinDevs".
+                Name of Recipient.
+                e.g.: "AyiinDevs".
+
             noRek (``str``):
-                Number of Recipient, e.g.: "123456789".
+                Number of Recipient.
+                e.g.: "123456789".
+
             amount (``str``):
-                Amount of Withdraw, e.g.: "1000".
+                Amount of Withdraw.
+                e.g.: "1000".
+
             method (``str``):
-                Method of Withdraw, e.g.: "Bank SeaBank".
+                Method of Withdraw.
+                e.g.: "Bank SeaBank".
 
         Returns:
             ``Withdraw``: Withdraw Object
